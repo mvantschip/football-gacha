@@ -1,0 +1,11 @@
+wheel
+discord.py
+Django==2.2.3
+matplotlib
+pandas
+texttable
+Pillow
+psycopg2-binary
+psycopg2
+fuzzywuzzy
+inflect

@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+import os
+import sys
+#from git import Repo
+import subprocess
+import json
+
+######################################Versioning check##########################################
+i = None
+while i != "y":
+    i = input("Please make sure that all changes have been properly versioned. Hit (y) to confirm. Hit (n) to chancel.\n")
+    if i =="n":
+        sys.exit(1)
+
+######################################Update version file##########################################
+if "version.txt" in os.listdir("."):
+    with open("version.txt",'r') as f:
+        version = f.read()
+else:
+    version = None
+
+n_version = input(f"Old version {version}. New version:\n")
+
+if n_version != version:
+    with open("version.txt",'w') as f:
+        f.write(n_version)
+
+######################################Create tag with version##########################################
+version = n_version
+######################################Get secrets##########################################
+with open('secret.json','r') as f:
+    secret = json.load(f)
+######################################Rsync command##########################################
+print("Syncing to server ...\n")
+cdo = f"rsync -a -v -z --progress . {secret['server_user']}@{secret['server_ip']}:~/prog/IntroBot/ --exclude venv --exclude .git --exclude .idea --exclude debug.log --exclude info.log --exclude errors.log --exclude db.sqlite3 --exclude __pycache__ --exclude secret.json --exclude secret_prod.json --exclude secret_dev.json --exclude venv_windows"
+process = subprocess.Popen(cdo.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
+
+
+
